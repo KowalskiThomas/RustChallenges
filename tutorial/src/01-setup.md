@@ -15,7 +15,7 @@ Note that as stated by the installer, you will need to export an env variable in
 
 You can sanity check your installation by running `cargo --version`, more on cargo later.
 
-You will also need to install the MacOS vendored LLVM compiler (it's possible you already have it, but it tends to disappear after a major MacOS upgrade): run `xcode-select install`.
+You will also need to install the MacOS vendored LLVM compiler (it's possible you already have it, but it tends to disappear after a major MacOS upgrade): run `xcode-select --install`.
 
 
 I also highly recommend to export these two env variables in your shell:

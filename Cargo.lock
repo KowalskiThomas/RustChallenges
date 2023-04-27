@@ -21,6 +21,7 @@ dependencies = [
  "anyhow",
  "node_driver",
  "serde",
+ "uuid",
 ]
 
 [[package]]
