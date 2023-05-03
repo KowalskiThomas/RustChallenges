@@ -78,6 +78,34 @@ impl Node {
         }
     }
 
+    fn do_gossiping(&mut self) {
+        let node_metadata = self.node_metadata.as_mut().unwrap();
+        let output = self.output.as_mut().unwrap();
+
+        eprintln!("Gossiping !");
+        if let Some(top) = &self.topology {
+            let my_neighbours = top.get(&node_metadata.node_id);
+            if let Some(my_neighbours) = my_neighbours {
+                for node in my_neighbours.iter() {
+                    eprintln!("Sending to {}", node);
+                    output
+                        .send_msg(Message {
+                            src: node_metadata.node_id.clone(),
+                            dst: node.clone(),
+                            body: Body {
+                                msg_id: Some(node_metadata.get_next_msg_id()),
+                                in_reply_to: None,
+                                payload: BroadcastPayload::Gossip {
+                                    known: self.all_known.clone(),
+                                },
+                            },
+                        })
+                        .unwrap()
+                }
+            }
+        }
+    }
+
     fn main_loop(&mut self) {
         let rx = self.rx.as_ref().unwrap();
         let node_metadata = self.node_metadata.as_mut().unwrap();
@@ -89,28 +117,7 @@ impl Node {
                 match ev {
                     Event::Eof => break,
                     Event::TimeToGossip => {
-                        eprintln!("Gossiping !");
-                        if let Some(top) = &self.topology {
-                            let my_neighbours = top.get(&node_metadata.node_id);
-                            if let Some(my_neighbours) = my_neighbours {
-                                for node in my_neighbours.iter() {
-                                    eprintln!("Sending to {}", node);
-                                    output
-                                        .send_msg(Message {
-                                            src: node_metadata.node_id.clone(),
-                                            dst: node.clone(),
-                                            body: Body {
-                                                msg_id: Some(node_metadata.get_next_msg_id()),
-                                                in_reply_to: None,
-                                                payload: BroadcastPayload::Gossip {
-                                                    known: self.all_known.clone(),
-                                                },
-                                            },
-                                        })
-                                        .unwrap()
-                                }
-                            }
-                        }
+                        self.do_gossiping();
                     }
                     Event::MessageReceived(msg) => {
                         match &msg.body.payload {
