@@ -78,39 +78,47 @@ impl Node {
         }
     }
 
-    fn main_loop(&mut self) {
-        let rx = self.rx.as_ref().unwrap();
+    fn do_gossiping(&mut self) {
         let node_metadata = self.node_metadata.as_mut().unwrap();
         let output = self.output.as_mut().unwrap();
 
+        eprintln!("Gossiping !");
+        if let Some(top) = &self.topology {
+            let my_neighbours = top.get(&node_metadata.node_id);
+            if let Some(my_neighbours) = my_neighbours {
+                for node in my_neighbours.iter() {
+                    eprintln!("Sending to {}", node);
+                    output
+                        .send_msg(Message {
+                            src: node_metadata.node_id.clone(),
+                            dst: node.clone(),
+                            body: Body {
+                                msg_id: Some(node_metadata.get_next_msg_id()),
+                                in_reply_to: None,
+                                payload: BroadcastPayload::Gossip {
+                                    known: self.all_known.clone(),
+                                },
+                            },
+                        })
+                        .unwrap()
+                }
+            }
+        }
+    }
+
+    fn main_loop(&mut self) {
         loop {
-            if let Ok(ev) = rx.try_recv() {
+            let maybe_event = {
+                let rx = self.rx.as_ref().unwrap();
+                rx.try_recv()
+            };
+
+            if let Ok(ev) = maybe_event {
                 let mut to_send: Option<Message<BroadcastPayload>> = None;
                 match ev {
                     Event::Eof => break,
                     Event::TimeToGossip => {
-                        eprintln!("Gossiping !");
-                        if let Some(top) = &self.topology {
-                            let my_neighbours = top.get(&node_metadata.node_id);
-                            if let Some(my_neighbours) = my_neighbours {
-                                for node in my_neighbours.iter() {
-                                    eprintln!("Sending to {}", node);
-                                    output
-                                        .send_msg(Message {
-                                            src: node_metadata.node_id.clone(),
-                                            dst: node.clone(),
-                                            body: Body {
-                                                msg_id: Some(node_metadata.get_next_msg_id()),
-                                                in_reply_to: None,
-                                                payload: BroadcastPayload::Gossip {
-                                                    known: self.all_known.clone(),
-                                                },
-                                            },
-                                        })
-                                        .unwrap()
-                                }
-                            }
-                        }
+                        self.do_gossiping();
                     }
                     Event::MessageReceived(msg) => {
                         match &msg.body.payload {
@@ -157,6 +165,9 @@ impl Node {
                         }
 
                         if let Some(mut msg) = to_send {
+                            let node_metadata = self.node_metadata.as_mut().unwrap();
+                            let output = self.output.as_mut().unwrap();
+
                             msg.body.msg_id = Some(node_metadata.get_next_msg_id());
                             output.send_msg(msg).unwrap();
                         }

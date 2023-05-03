@@ -1,0 +1,5 @@
+use node_driver::{Body, InputInterface, Maelstrom, Message, NodeMetadata, OutputInterface};
+
+fn main() -> anyhow::Result<()> {
+    Maelstrom::init();
+}

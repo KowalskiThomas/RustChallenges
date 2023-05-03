@@ -1,4 +1,4 @@
-use node_driver::{Body, Maelstrom, Message, NodeMetadata};
+use node_driver::{Body, Maelstrom, Message};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
