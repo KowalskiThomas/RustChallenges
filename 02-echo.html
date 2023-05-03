@@ -1,0 +1,540 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Chapter 2: The Echo challenge - Rust Workshop Tutorial: Distributed Systems Challenges</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var html = document.querySelector('html');
+            var sidebar = null;
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="00-intro.html">Introduction</a></li><li class="chapter-item expanded "><a href="01-setup.html"><strong aria-hidden="true">1.</strong> Chapter 1: Setup</a></li><li class="chapter-item expanded "><a href="02-echo.html" class="active"><strong aria-hidden="true">2.</strong> Chapter 2: The Echo challenge</a></li><li class="chapter-item expanded "><a href="03-unique_id.html"><strong aria-hidden="true">3.</strong> Chapter 3: The Unique Id challenge</a></li><li class="chapter-item expanded "><a href="04-broadcast.html"><strong aria-hidden="true">4.</strong> Chapter 4: The Broadcast challenge</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="04a-broadcast.html"><strong aria-hidden="true">4.1.</strong> Chapter 4a: Single node broadcast</a></li><li class="chapter-item expanded "><a href="04b-broadcast.html"><strong aria-hidden="true">4.2.</strong> Chapter 4b: Multi node broadcast</a></li></ol></li><li class="chapter-item expanded "><a href="A-cargo.html">Appendix A: Cargo Cheatsheet</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Rust Workshop Tutorial: Distributed Systems Challenges</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="chapter-2-the-echo-challenge"><a class="header" href="#chapter-2-the-echo-challenge">Chapter 2: The Echo challenge</a></h1>
+<h2 id="explanation"><a class="header" href="#explanation">Explanation</a></h2>
+<p>You can find the challenge here: <a href="https://fly.io/dist-sys/1/">https://fly.io/dist-sys/1/</a></p>
+<p>The goal of this challenge is to discover how to interact with Maelstrom and build a very basic echo server.</p>
+<p>You should start by reading the challenge description to get a better sense of how Maelstrom works. Then, this tutorial will take you step-by-step through a Rust solution.</p>
+<h2 id="forewords-working-with-maelstrom"><a class="header" href="#forewords-working-with-maelstrom">Forewords: working with Maelstrom</a></h2>
+<p>In the challenge description, you'll note that the authors refer to a Go library they provide to easily interact with the Maelstrom nodes and clients. This repo provides you with a similar Rust library, located in the <code>node_driver</code> folder. It handles the initialization of your node, the communications over STDIN and STDOUT with Maelstrom, and the serialization and deserialization of the Messages.</p>
+<p>We will explore this library as users in the tutorial, you can find the public documentation for this lib at <a href="https://distributed-challenges.vercel.app/">https://distributed-challenges.vercel.app/</a>. If you are getting confident with your Rust skills, I recommend taking some time later to explore this lib and see how it's coded.</p>
+<h2 id="walkthrough"><a class="header" href="#walkthrough">Walkthrough</a></h2>
+<h3 id="discovering-our-first-struct-and-enum"><a class="header" href="#discovering-our-first-struct-and-enum">Discovering our first <code>struct</code> and <code>enum</code></a></h3>
+<p>Reading through the challenge guide, we see our node will receive <code>echo</code> messages that look something like that:</p>
+<pre><code class="language-json">{
+  &quot;src&quot;: &quot;c1&quot;,
+  &quot;dest&quot;: &quot;n1&quot;,
+  &quot;body&quot;: {
+    &quot;type&quot;: &quot;echo&quot;,
+    &quot;msg_id&quot;: 1,
+    &quot;echo&quot;: &quot;Please echo 35&quot;
+  }
+}
+</code></pre>
+<p>(If you want more details on the protocol Maelstrom uses to transmit messages, see <a href="https://github.com/jepsen-io/maelstrom/blob/main/doc/protocol.md">this</a>)</p>
+<p>As explained above, the <code>node_driver</code> library provides you everything you need to model such messages. Therefore, before writing any Rust, we will start by reading the documentation of this library, and more particularly the documentation of the <a href="https://distributed-challenges.vercel.app/node_driver/struct.Message.html">Message struct</a>.</p>
+<p>This is our first encounter with a <code>struct</code>, the concept Rust uses to define aggregates of data. This is in a way very similar to C structs as you define your data and the behaviors to operate on it separately. Our data structure definition looks like this:</p>
+<pre><code class="language-rust ignore">pub struct Message&lt;P&gt; {
+    pub src: String,
+    pub dst: String,
+    pub body: Body&lt;P&gt;,
+}</code></pre>
+<p>The <code>pub</code> keyword at the struct level denotes that this is a public structure exposed by the library to its callers, while the <code>pub</code> keywords before each field of the struct denotes these fields are accessible from outside of the struct, this can be though of as visibility modifiers. Of course, the documentation only shows public fields and structs since they are the only ones we can interact with.</p>
+<p>Each field is described as <code>field_name: field_type</code>.</p>
+<p>We see two basic fields <code>src</code> and <code>dst</code>, of type String.</p>
+<p>The last field type has a generic annotation (the <code>&lt;P&gt;</code> syntax, C++ users should feel pretty much at home here). It means that the <code>Message</code> struct is generic over a type, noted <code>P</code>, and here this type <code>P</code> is used in the definition of the type of the field <code>body</code>: a <code>Body&lt;P&gt;</code>. Let's look at the documentation for the type <code>Body</code> to understand what's going on here.</p>
+<p>The <code>Body</code> struct is documented like this:</p>
+<pre><code class="language-rust ignore">pub struct Body&lt;P&gt; {
+    pub msg_id: Option&lt;usize&gt;,
+    pub in_reply_to: Option&lt;usize&gt;,
+    pub payload: P,
+}</code></pre>
+<p>There are two new things there: we see two fields that are of type <code>Option&lt;usize&gt;</code>, and the last field is of the type <code>P</code>, our generic type parameter. Let's explain each.</p>
+<p><code>Option&lt;T&gt;</code> is another generic struct, in fact it comes from the Rust standard lib and is a staple of any Rust program, you can see the doc for this struct by clicking on it in the doc of the <code>Body</code> struct. This is actually an <code>enum</code> and not a <code>struct</code>, defined as:</p>
+<pre><code class="language-rust ignore">pub enum Option&lt;T&gt; {
+    None,
+    Some(T),
+}</code></pre>
+<p>(note that all enum fields have the visibility of the enum so no need to add <code>pub</code> to each variant here)</p>
+<p>So far this definition looks pretty similar to a classic Python enum, except, the second variant <code>Some</code> actually contains data, of type <code>T</code> (the generic parameter of the enum). This is what we call a <code>sum type</code> or an <code>algebraic type</code>: an enum that can contain different data types based on the variant. In our case, we use an <code>Option&lt;usize&gt;</code> which means that the data contained in the <code>Some</code> variant will be of type <code>usize</code> (a <code>usize</code> is an unsigned integer of the size of a pointer on your system, most likely 64 bits on a 64 bits system, for more details on basic scalar types, see <a href="https://google.github.io/comprehensive-rust/basic-syntax/scalar-types.html">this</a>), while the <code>None</code> variant contains nothing.</p>
+<p>Algebraic types are one of the killer features of Rust, for more details, refer to the <a href="https://doc.rust-lang.org/book/ch06-00-enums.html">official rust book</a>. What's really important is that to get data out of your <code>Option</code> instance, you NEED to check if it's <code>None</code> or <code>Some</code> before, and the compiler will force you to do so. There is no way around this, and this prevents developers from accidentally forgetting that the result they deal with can be None. Python programmers will hopefully quickly realize how powerful this is, and how much safety it brings to the programs.</p>
+<p>Let's go back at our <code>Body</code> struct and look at the <code>payload</code> field. We see it is of type <code>P</code>, the type over which our struct is generic. This means that we can stuff any type we want as a payload of our message, a <code>Message&lt;f64&gt;</code> will have a field body of type <code>Body&lt;f64&gt;</code> which in turns will have a field payload of type <code>f64</code>.</p>
+<h3 id="defining-the-messages"><a class="header" href="#defining-the-messages">Defining the messages</a></h3>
+<p>Armed with this knowledge, let's hop into our editor and start writing Rust to represent the <code>echo</code> messages. Open the file <code>distributed_challenges/src/bin/echo.rs</code>. You are faced with this:</p>
+<pre><code class="language-rust ignore">fn main() -&gt; anyhow::Result&lt;()&gt; {
+    todo!()
+}</code></pre>
+<p>This is a minimal Rust program, composed of a <code>main</code> function taking no arguments and returning a value of type <code>anyhow::Result&lt;()&gt;</code>. Let's not bother too much about this return type for now.
+The corpus of the function is a single invocation of the <code>todo!()</code> macro. Any function postfixed with a <code>!</code> is what we call a <code>macro</code>. Let's not bother about this either, you can think of them as functions on steroids for now (If you want to know more, check out the <a href="https://doc.rust-lang.org/book/ch19-06-macros.html">rust book</a>).</p>
+<p>Let's define an enumeration to represent the payloads for the two messages our application will need to handle. Add this definition outside of the main function:</p>
+<pre><code class="language-rust ignore">/// Defines the payload we want to send to clients in the echo challenge
+enum EchoPayload {
+    /// Used by clients to send an echo request
+    Echo { echo: String },
+    /// Used by nodes to respond to an echo request
+    EchoOk { echo: String },
+}</code></pre>
+<p>We have two variants, one for each message, and each of them contains a string field called <code>echo</code> that will represent the data we are asked to echo back. (The <code>///</code> defines docstring of the fields, while <code>//</code> are regular non-documenting comments)</p>
+<p>Let's make our enum a little bit easier to work with by adding some useful behaviors to it: <code>Debug</code> and <code>Clone</code>. The first one will allow us to print the enum content to debug it, and the second will make it so we can clone instances of the enum if we need to.
+In fact, these &quot;behaviors&quot; are what we call in Rust <code>traits</code> (see <a href="https://doc.rust-lang.org/book/ch10-02-traits.html">the official book</a> on this). A trait defines functionality a particular type has and can share with other types. We can use traits to define shared behavior in an abstract way. This is in a way the interfaces of Rust, although it is much more powerful than this.</p>
+<p>The <code>Debug</code> and <code>Clone</code> traits are provided by the Rust standard library: <a href="https://doc.rust-lang.org/std/clone/trait.Clone.html">https://doc.rust-lang.org/std/clone/trait.Clone.html</a> and <a href="https://doc.rust-lang.org/std/fmt/trait.Debug.html">https://doc.rust-lang.org/std/fmt/trait.Debug.html</a>. We could manually implement it for our type if we wanted to do fancy things, but the compiler is smart enough to infer basic implementations of these traits for us and all we have to do to get it is to add this line on top of our enum:</p>
+<pre><code class="language-rust ignore">/// Defines the payload we want to send to clients in the echo challenge
+#[derive(Debug, Clone)]
+enum EchoPayload {
+    /// Used by clients to send an echo request
+    Echo { echo: String },
+    /// Used by nodes to respond to an echo request
+    EchoOk { echo: String },
+}</code></pre>
+<p>This tells the Rust compiler to generate an implementation of both the <code>Clone</code> and <code>Debug</code> traits for the <code>EchoPayload</code> enum, this is what we call &quot;deriving traits&quot;. Here this work because Rust already ships a default implementation of these traits for all the types contained in our enumeration (<code>String</code> in this case).</p>
+<h3 id="implementing-the-main-loop-of-our-server"><a class="header" href="#implementing-the-main-loop-of-our-server">Implementing the main loop of our server</a></h3>
+<p>Now that we have a payload enum, let's start writing the logic of our server. In the main, let's first initialize our Malestrom client:</p>
+<pre><code class="language-rust ignore">use node_driver::Maelstrom;
+
+// ... snip ...
+
+fn main() -&gt; anyhow::Result&lt;()&gt; {
+    // init our node by getting its metadata and an output and input interface to communicate
+    let (node_metadata, input, output) = Maelstrom::init()?;
+
+    Ok(())
+}</code></pre>
+<p>There's a bunch of new concepts here:</p>
+<ul>
+<li>we add a <code>use</code> statement to import the <code>Maelstrom</code> type from the <code>node_driver</code> lib.</li>
+<li>we define variables using the <code>let</code> keyword.</li>
+<li>we call the <code>init</code> class method of the <code>Maelstrom</code> struct using the <code>Maelstrom::init()</code> syntax.</li>
+<li>we use the <code>?</code> sigil to bubble up errors returned by the <code>init()</code> method to the output of the <code>main</code> function (you now see why we return a Result over the null type <code>()</code> as our main return type). If you look at the signature of the <code>init()</code> method in the documentation, you'll see it returns a <code>Result&lt;(NodeMetadata, InputInterface, OutputInterface)&gt;</code> and not just the tuple <code>(NodeMetadata, InputInterface, OutputInterface)</code>, a <code>Result</code> is also a sum type, very similar to <code>Option&lt;T&gt;</code>, which allows us to denote if a function errored out or if it returned a result.</li>
+<li>statements finish with a <code>;</code> while expressions don't, and if the last line of a function is an expression, it is returned automatically. You can also use the statement syntax <code>return Ok(());</code> but it is less idiomatic. For more details on expressions vs. statements, see <a href="https://web.mit.edu/rust-lang_v1.25/arch/amd64_ubuntu1404/share/doc/rust/html/book/first-edition/functions.html#expressions-vs-statements">this article</a>.</li>
+</ul>
+<p>You'll see that if you remove the <code>?</code> sigil for instance, running <code>cargo build</code> or <code>cargo check</code> will give you a clear compiler error that the type don't match and that you need to ensure the result returned by the <code>init</code> method is not an error. This is what the <code>?</code> sigil does, it bubbles up any error and if there is none, it &quot;unwrap&quot; the data out of the Result type. I encourage you to try stuff and read compiler errors, they have been designed to be as informative as possible and explain properly the source of your issue and how to solve it.</p>
+<p>Now that our node is initialized, we can add our main loop over the incoming messages:</p>
+<pre><code class="language-rust ignore">// ... snip ...
+
+fn main() -&gt; anyhow::Result&lt;()&gt; {
+    // init our node by getting its metadata and an output and input interface to communicate
+    let (node_metadata, input, output) = Maelstrom::init()?;
+
+    // main loop: for each message we receive through the input interface (with a payload of type EchoPayload)
+    for msg in input.iter::&lt;EchoPayload&gt;() {
+
+    }
+
+    Ok(())
+}</code></pre>
+<p>We see here a for loop with no body yet. We loop over the content of <code>input.iter::&lt;EchoPayload&gt;()</code>, let's decipher this. Our <code>input</code> object, of type <code>InputInterface</code>, has a method called <code>iter&lt;P&gt;()</code> which produces an iterator over items of type <code>Result&lt;Message&lt;P&gt;&gt;</code>. However, if we just wrote <code>for msg in input.iter()</code>, the compiler cannot infer which type of item it should be producing because it can't infer what <code>P</code> should be in this context. Therefore we use the &quot;turbofish&quot; syntax <code>::&lt;&gt;</code> (yes, this is a fish going fast) to disambiguate the call to <code>iter</code> and specify that <code>P</code> should be <code>EchoPayload</code> in our case.</p>
+<p>However, if you try to compile this program with <code>cargo build</code>, you will be faced with errors:</p>
+<pre><code class="language-ignore">error[E0277]: the trait bound `for&lt;'de&gt; EchoPayload: serde::de::Deserialize&lt;'de&gt;` is not satisfied
+  --&gt; distributed_challenges/src/bin/echo.rs:17:29
+   |
+17 |     for msg in input.iter::&lt;EchoPayload&gt;() {}
+   |                             ^^^^^^^^^^^ the trait `for&lt;'de&gt; serde::de::Deserialize&lt;'de&gt;` is not implemented for `EchoPayload`
+   |
+   = help: the following other types implement trait `serde::de::Deserialize&lt;'de&gt;`:
+             &amp;'a Path
+             &amp;'a [u8]
+             &amp;'a str
+             ()
+             (T0, T1)
+             (T0, T1, T2)
+             (T0, T1, T2, T3)
+             (T0, T1, T2, T3, T4)
+           and 129 others
+   = note: required for `EchoPayload` to implement `serde::de::DeserializeOwned`
+note: required by a bound in `InputInterface::iter`
+  --&gt; /Users/arthur.depasse/perso/DistributedChallenges/node_driver/src/lib.rs:98:12
+   |
+98 |         P: DeserializeOwned,
+   |            ^^^^^^^^^^^^^^^^ required by this bound in `InputInterface::iter`
+
+For more information about this error, try `rustc --explain E0277`.
+error: could not compile `distributed_challenges` due to previous error
+</code></pre>
+<p>This looks rather cryptic at first, but you'll see it's actually a treasure trove of information to fix our error.</p>
+<h3 id="fulfilling-trait-bounds"><a class="header" href="#fulfilling-trait-bounds">Fulfilling trait bounds</a></h3>
+<p>Looking at the error message, we can read the following:</p>
+<pre><code class="language-ignore">the trait bound `for&lt;'de&gt; EchoPayload: serde::de::Deserialize&lt;'de&gt;` is not satisfied
+   |
+17 |     for msg in input.iter::&lt;EchoPayload&gt;() {}
+   |                             ^^^^^^^^^^^ the trait `for&lt;'de&gt; serde::de::Deserialize&lt;'de&gt;` is not implemented for `EchoPayload`
+   |
+...
+note: required by a bound in `InputInterface::iter`
+...
+   |
+98 |         P: DeserializeOwned,
+   |            ^^^^^^^^^^^^^^^^ required by this bound in `InputInterface::iter`
+</code></pre>
+<p>This tells us that we are not fulfilling a constraint imposed by the <code>iter()</code> function. Let's look at its documentation:</p>
+<p>This definition of the payload is not enough though. Let's have a look at the documentation of the <code>node_driver</code> lib and in particular, how to send a message with it: <a href="https://distributed-challenges.vercel.app/node_driver/struct.OutputInterface.html#implementations">https://distributed-challenges.vercel.app/node_driver/struct.OutputInterface.html#implementations</a>. In here we see this special syntax for the <code>send_msg</code> function:</p>
+<pre><code class="language-rust ignore">pub fn iter&lt;P&gt;(&amp;mut self) -&gt; impl Iterator&lt;Item = Result&lt;Message&lt;P&gt;&gt;&gt; + '_
+where
+    P: DeserializeOwned,</code></pre>
+<p>It's admittedly a bit hairy because it is very explicit, but the interesting part for us is what comes after the <code>where</code> clause: <code>P: DeserializeOwned</code>. This is what we call a trait bound, the function enforces that any generic type <code>P</code> we use with it must at least implement the <code>DeserializeOwned</code> trait. This is a very important mechanisms that let's us do some kind of compile-time polymorphism: we can call iter with any type as long as we know it implement this interface. In this case, we need to enforce the message can be deserialized into an owned <code>Message&lt;P&gt;</code>.</p>
+<p>Note: this <code>DeserializeOwned</code> trait is not coming from the standard Rust library but from another lib called <code>serde</code> that provides utils for serializing and deserializing data structures in a multitude of formats.</p>
+<p>If we also look at <a href="https://distributed-challenges.vercel.app/node_driver/struct.OutputInterface.html#method.send_msg">the function we use to send messages back</a>, we see it has a bound as well, <code>P</code> must implement <code>Serialize</code>.</p>
+<p>Therefore, let's implement both <code>serde::Serialize</code> and <code>serde:Deserialize</code> for our payload type (in our case implementing <code>Deserialize</code> is enough to get <code>DeserializeOwned</code>, for reasons we won't detail here).</p>
+<p>We could implement these traits by hand but fortunately, <code>serde</code> comes with a feature that allows us to use the helpful <code>derive</code> statement to auto-implement them for struct that only contain data that also implement them (which is the case here, all default data types implement them).</p>
+<pre><code class="language-rust ignore">use serde::{Serialize, Deserialize}
+/// Defines the payload we want to send to clients in the echo challenge
+#[derive(Debug, Clone, Serialize, Deserialize)]
+enum EchoPayload {
+    /// Used by clients to send an echo request
+    Echo { echo: String },
+    /// Used by nodes to respond to an echo request
+    EchoOk { echo: String },
+}</code></pre>
+<p>And now the error magically goes away as our Payload type meets the conditions required to deserialize it from a Maelstrom STDIN message.</p>
+<p>We still have one error left though:</p>
+<pre><code class="language-ignore">error[E0596]: cannot borrow `input` as mutable, as it is not declared as mutable
+  --&gt; distributed_challenges/src/bin/echo.rs:18:16
+   |
+18 |     for msg in input.iter::&lt;EchoPayload&gt;() {}
+   |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^ cannot borrow as mutable
+   |
+help: consider changing this to be mutable
+   |
+15 |     let (node_metadata, mut input, output) = Maelstrom::init()?;
+   |                         +++
+</code></pre>
+<p>This one can also be explained by looking at the signature of the <code>input</code> method:</p>
+<pre><code class="language-rust ignore">pub fn iter&lt;P&gt;(&amp;mut self) -&gt; impl Iterator&lt;Item = Result&lt;Message&lt;P&gt;&gt;&gt; + '_
+where
+    P: DeserializeOwned,</code></pre>
+<p>Notice the <code>&amp;mut</code> modifier in front of <code>self</code>? This means this method will act on a self that is a <code>mutable reference</code> to the instance it's called on. This means that <code>self</code> is not passed by value but by reference, and that this reference is an exclusive mutable reference that allows the user to modify the <code>InputInterface</code> instance represented by <code>self</code>.</p>
+<p>Our error comes from the fact that variables in Rust are immutable by default. Because of this, <code>input</code> can only be dereferenced to <code>&amp;self</code> when calling <code>iter</code>, and not <code>&amp;mut self</code>.
+We can simply fix that by adding the <code>mut</code> modifier to the definition of let to allow mutability. In fact, let's add it to <code>output</code> and <code>node_metadata</code> as well since we will also need them to be mutable in the future. Note that the error message suggests you a fix for this error.</p>
+<pre><code class="language-rust ignore">    // init our node by getting its metadata and an output and input interface to communicate
+    let (mut node_metadata, mut input, mut output) = Maelstrom::init()?;</code></pre>
+<p>There is one final touch we need to make to our <code>EchoPayload</code> before jumping to filling out the loop body. Indeed as stated in the documentation of the <a href="https://distributed-challenges.vercel.app/node_driver/struct.Body.html#structfield.payload">body payload</a> and the <a href="https://github.com/jepsen-io/maelstrom/blob/main/doc/protocol.md">Maelstrom protocol</a>, we need to make sure our json payload we ultimately send contains a <code>type</code> field, which we haven't added to our enum variants.</p>
+<p>There is a neat trick to do it automatically, based on the name of the variant, using <code>serde</code> annotations:</p>
+<pre><code class="language-rust ignore">/// Defines the payload we want to send to clients in the echo challenge
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(tag = &quot;type&quot;)]
+#[serde(rename_all = &quot;snake_case&quot;)]
+enum EchoPayload {
+    /// Used by clients to send an echo request
+    Echo { echo: String },
+    /// Used by nodes to respond to an echo request
+    EchoOk { echo: String },
+}</code></pre>
+<p>Note we added two <code>#[serde(...)]</code> annotations to our enum. The first one asks serde to use an internal tag field to hold the enum variant, and to name this field <code>type</code>, which serde will populate with the variant's name. The second tells serde to automatically rename all variants using snake_case, which will give us our <code>&quot;type&quot; = &quot;echo&quot;</code> and <code>&quot;type&quot; = &quot;echo_ok&quot;</code> in our json messages. For more details on handling of enums in <code>serde</code>, look at <a href="https://serde.rs/enum-representations.html">https://serde.rs/enum-representations.html</a></p>
+<p>We end up with the following code at this point:</p>
+<pre><code class="language-rust ignore">use node_driver::Maelstrom;
+use serde::{Deserialize, Serialize};
+
+/// Defines the payload we want to send to clients in the echo challenge
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(tag = &quot;type&quot;)]
+#[serde(rename_all = &quot;snake_case&quot;)]
+enum EchoPayload {
+    /// Used by clients to send an echo request
+    Echo { echo: String },
+    /// Used by nodes to respond to an echo request
+    EchoOk { echo: String },
+}
+
+fn main() -&gt; anyhow::Result&lt;()&gt; {
+    // init our node by getting its metadata and an output and input interface to communicate
+    let (mut node_metadata, mut input, mut output) = Maelstrom::init()?;
+
+    // main loop: for each message we receive through the input interface (with a payload of type EchoPayload)
+    for msg in input.iter::&lt;EchoPayload&gt;() {}
+
+    Ok(())
+}</code></pre>
+<h3 id="finish-implementing-the-main-loop"><a class="header" href="#finish-implementing-the-main-loop">Finish implementing the main loop</a></h3>
+<p>It's now time to code the logic to react to the messages we receive.</p>
+<p>First, we need to extract the message out of the <code>Result&lt;Message&lt;EchoPayload&gt;&gt;</code> returned by our iterator:</p>
+<pre><code class="language-rust ignore">fn main() -&gt; anyhow::Result&lt;()&gt; {
+    // init our node by getting its metadata and an output and input interface to communicate
+    let (mut node_metadata, mut input, mut output) = Maelstrom::init()?;
+
+    // main loop: for each message we receive through the input interface (with a payload of type EchoPayload)
+    for msg in input.iter::&lt;EchoPayload&gt;() {}
+        // if there was an error getting this message, propagate it (with the ? sigil)
+        let msg = msg?;
+    Ok(())
+}</code></pre>
+<p>Here we do a nice thing, we shadow the variable name <code>msg</code> by extracting the content or bubbling up any error using <code>?</code>. After this line, the type of <code>msg</code> is no longer <code>Result&lt;Message&lt;EchoPayload&gt;&gt;</code> but <code>Message&lt;EchoPayload&gt;</code> which simplifies our code.</p>
+<p>Now, we will use a <code>match</code> statement to react differently to all the possible variants of the payload contained in the message:</p>
+<pre><code class="language-rust ignore">    // main loop: for each message we receive through the input interface (with a payload of type EchoPayload)
+    for msg in input.iter::&lt;EchoPayload&gt;() {
+        // if there was an error getting this message, propagate it (with the ? sigil)
+        let msg = msg?;
+        // match on the type of payload within the message, these are variants of the EchoPayload enum
+        match msg.body.payload {
+            // if we get an Echo message, let's reply by crafting an EchoOk message and sending it through the output interface
+            EchoPayload::Echo { echo } =&gt; todo!(),
+            // we are not supposed to receive and EchoOk message, let's panic when it happens
+            EchoPayload::EchoOk { .. } =&gt; panic!(&quot;EchoOk message shouldn't be received by a node&quot;),
+        };
+    }</code></pre>
+<p><code>match</code> statements are one of the killer features of Rust, they are really powerful, support pattern matching, and need to be exhaustive.</p>
+<p>Here we match on <code>msg.body.payload</code> which is of type <code>EchoPayload</code>, each arm of the match statement if of the form <code>pattern =&gt; expression,</code> or <code>pattern =&gt; statement,</code>.
+We use simple patterns here, one for each possible variant. In the first one, we use the pattern to deconstruct the <code>echo</code> field within the variant since we will need it to craft the response. In the second arm, we don't need it so we elide the deconstruction with the <code>..</code>.
+Finally, the second match arm is not supposed to happen in normal operations, so when it does we simply invoke the <code>panic!()</code> macro that will safely exit the program with an error message.</p>
+<p>Finally, let's complete the first match arm and send a response message:</p>
+<pre><code class="language-rust ignore">// ...
+match msg.body.payload {
+    EchoPayload::Echo { echo } =&gt; output.send_msg(Message {
+        src: node_metadata.node_id.clone(),
+        dst: msg.src,
+        body: Body {
+            msg_id: Some(node_metadata.get_next_msg_id()),
+            in_reply_to: msg.body.msg_id,
+            payload: EchoPayload::EchoOk { echo },
+        },
+    })?,
+    /// ...</code></pre>
+<p>This version is written concisely, but we could have made it a little clearer to new rustaceans by using a <code>{}</code> expression block here:</p>
+<pre><code class="language-rust ignore">match msg.body.payload {
+    EchoPayload::Echo { echo } =&gt; {
+        let response = Message {
+            src: node_metadata.node_id.clone(),
+            dst: msg.src,
+            body: Body {
+                msg_id: Some(node_metadata.get_next_msg_id()),
+                in_reply_to: msg.body.msg_id,
+                payload: EchoPayload::EchoOk { echo },
+            }
+        };
+        output.send_msg(response)?
+    },
+    /// ...</code></pre>
+<p>We see that we instantiate a <code>Message</code> with an <code>EchoOk</code> payload, obtain a new message id from our <code>NodeMetadata</code> instance, and use our output interface to send it.</p>
+<p>You should end up with the following code:</p>
+<pre><code class="language-rust ignore">use node_driver::{Body, Maelstrom, Message};
+use serde::{Deserialize, Serialize};
+
+/// Defines the payload we want to send to clients in the echo challenge
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(tag = &quot;type&quot;)]
+#[serde(rename_all = &quot;snake_case&quot;)]
+enum EchoPayload {
+    /// Used by clients to send an echo request
+    Echo { echo: String },
+    /// Used by nodes to respond to an echo request
+    EchoOk { echo: String },
+}
+
+fn main() -&gt; anyhow::Result&lt;()&gt; {
+    // init our node by getting its metadata and an output and input interface to communicate
+    let (mut node_metadata, mut input, mut output) = Maelstrom::init()?;
+    // main loop: for each message we receive through the input interface (with a payload of type EchoPayload)
+    for msg in input.iter::&lt;EchoPayload&gt;() {
+        // if there was an error getting this message, propagate it (with the ? sigil)
+        let msg = msg?;
+        // match on the type of payload within the message, these are variants of the EchoPayload enum
+        match msg.body.payload {
+            // if we get an Echo message, let's reply by crafting an EchoOk message and sending it through the output interface
+            EchoPayload::Echo { echo } =&gt; output.send_msg(Message {
+                src: node_metadata.node_id.clone(),
+                dst: msg.src,
+                body: Body {
+                    msg_id: Some(node_metadata.get_next_msg_id()),
+                    in_reply_to: msg.body.msg_id,
+                    payload: EchoPayload::EchoOk { echo },
+                },
+            })?,
+            // we are not supposed to receive and EchoOk message, let's panic when it happens
+            EchoPayload::EchoOk { .. } =&gt; panic!(&quot;EchoOk message shouldn't be received by a node&quot;),
+        };
+    }
+    Ok(())
+}</code></pre>
+<h3 id="testing-our-solution"><a class="header" href="#testing-our-solution">Testing our solution</a></h3>
+<p>It's now time to test our solution using Maelstrom:</p>
+<pre><code class="language-bash">cargo build
+~/maelstrom/maelstrom test -w echo --bin target/debug/echo --node-count 1 --time-limit 10
+</code></pre>
+<p>If it all goes well, you should ultimately see this message:</p>
+<pre><code class="language-ignore">Everything looks good! ヽ(‘ー`)ノ
+</code></pre>
+<p>Congrats, you finished Challenge 1!</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="01-setup.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next" href="03-unique_id.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="01-setup.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next" href="03-unique_id.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

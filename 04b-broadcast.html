@@ -1,0 +1,479 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Chapter 4b: Multi node broadcast - Rust Workshop Tutorial: Distributed Systems Challenges</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var html = document.querySelector('html');
+            var sidebar = null;
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="00-intro.html">Introduction</a></li><li class="chapter-item expanded "><a href="01-setup.html"><strong aria-hidden="true">1.</strong> Chapter 1: Setup</a></li><li class="chapter-item expanded "><a href="02-echo.html"><strong aria-hidden="true">2.</strong> Chapter 2: The Echo challenge</a></li><li class="chapter-item expanded "><a href="03-unique_id.html"><strong aria-hidden="true">3.</strong> Chapter 3: The Unique Id challenge</a></li><li class="chapter-item expanded "><a href="04-broadcast.html"><strong aria-hidden="true">4.</strong> Chapter 4: The Broadcast challenge</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="04a-broadcast.html"><strong aria-hidden="true">4.1.</strong> Chapter 4a: Single node broadcast</a></li><li class="chapter-item expanded "><a href="04b-broadcast.html" class="active"><strong aria-hidden="true">4.2.</strong> Chapter 4b: Multi node broadcast</a></li></ol></li><li class="chapter-item expanded "><a href="A-cargo.html">Appendix A: Cargo Cheatsheet</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Rust Workshop Tutorial: Distributed Systems Challenges</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="chapter-4b-multi-node-broadcast"><a class="header" href="#chapter-4b-multi-node-broadcast">Chapter 4b: Multi node broadcast</a></h1>
+<p>You can find the challenge here: <a href="https://fly.io/dist-sys/3b/">https://fly.io/dist-sys/3b/</a></p>
+<p>This challenge is where the real fun begins! Let's make our nodes communicate with each others.</p>
+<h2 id="a-bit-of-theory"><a class="header" href="#a-bit-of-theory">A bit of theory</a></h2>
+<h3 id="gossip"><a class="header" href="#gossip">Gossip</a></h3>
+<p>To do so, we will use one of the staples of distributed systems: Gossip. From <a href="https://en.wikipedia.org/wiki/Gossip_protocol#:~:text=A%20gossip%20protocol%20or%20epidemic,all%20members%20of%20a%20group.">the wikipedia page</a>: </p>
+<blockquote>
+<p>A gossip protocol or epidemic protocol is a procedure or process of computer peer-to-peer communication that is based on the way epidemics spread. Some distributed systems use peer-to-peer gossip to ensure that data is disseminated to all members of a group.</p>
+</blockquote>
+<p>By designing a broadcast system, the challenge encourages us to develop a leaderless architecture: we will develop a peer-to-peer architecture, which can be be very similar to what is used in Cassandra for instance. Every node is doing the same work and if you send a message to node A and then ask node B to get this same message, it should eventually be able to provide it to you. The word eventually is important, these systems are generally &quot;eventually consistent&quot; because it takes time to propagate state updates to all nodes. Essentially, this means that given enough time (a reasonable amount of it) after the last state update, all nodes should have the same state.</p>
+<p>For now we will implement an inefficient but simple version of gossip: whenever each node decides to gossip, it will send all the data it knows of to all other nodes. We will improve this in the next parts of this challenge.</p>
+<h3 id="scheduling-gossip-with-an-actors-model"><a class="header" href="#scheduling-gossip-with-an-actors-model">Scheduling gossip with an actors model</a></h3>
+<p>Next important thing is to decide when we want to gossip. We could do it after every message we receive but this seems terribly wasteful. Since we are ok with eventual consistency, let's gossip on a timer, every 100ms for instance.</p>
+<p>This means that we will need to change our main loop so that every so often, we pause message-listening to gossip what we know to other nodes in our topology. There are multiple way to implement this interleaved scheduling of two I/O tasks (waiting on a timer and reading new messages from stdin): we could leverage async Rust to do so with high performances, but this is far too complex for today's workshop, so instead we will use a simple multi-threaded approach by building an actors model.</p>
+<p>An actor model is a model in which each actor (generally a thread) is responsible for one part of the work, and each actor can only communicate with other actors through the use of messages. Actors models are very powerful and can make the writing of multi-threaded code much easier and less risky, since they essentially remove the need for lock-based synchronization. However, they also can often results in bottlenecks so they are not always the best choice. However for our use case it will work well.</p>
+<h2 id="walkthrough"><a class="header" href="#walkthrough">Walkthrough</a></h2>
+<p>In this part we will need to learn how to do new stuff in Rust: writing multi-threaded code in particular so we will start from the content of the solution of the previous part and elaborate on it progressively while explaining everything.</p>
+<p>We will have 3 different actors (so 2 additional threads to the main thread):</p>
+<ul>
+<li><strong>actor 1:</strong> run a timer and periodically ask for gossip to happen</li>
+<li><strong>actor 2:</strong> read messages from input</li>
+<li><strong>actor 3:</strong> consume the output of the previous two and run the main loop (i.e. send messages).</li>
+</ul>
+<p>Let's start by representing the messages our actors will send each others (we will call them <code>Event</code> to avoid confusion with the <code>Message</code> struct):</p>
+<pre><code class="language-rust ignore">/// This defines the possible events on which our main loop can react, within our actor system
+enum Event {
+    /// this event means there is no more input messages to read from Maelstrom
+    Eof,
+    /// this event means it's time to do some gossip
+    TimeToGossip,
+    /// this event means we have received a message
+    MessageReceived(Message&lt;BroadcastPayload&gt;),
+}</code></pre>
+<p>As you can see, we use an enum with 3 variants. The first one will be used to mark the end of the input and properly shut down other threads.</p>
+<p>The second one will be emitted by our first actor at a periodic interval</p>
+<p>The third one encapsulates a Message and is sent by the actor that consumes from stdin.</p>
+<p>Essentially, we will have this architecture:</p>
+<pre><code class="language-ignore">         ┌─────────┐
+         │         │
+timer ──►│ actor 1 ├─┐
+         │         │ │                ┌─────────┐
+         └─────────┘ │ Channel&lt;Event&gt; │         │
+                     ├───────────────►│ actor 3 ├──► stdout
+         ┌─────────┐ │                │         │
+         │         │ │                └─────────┘
+stdin ──►│ actor 2 ├─┘
+         │         │
+         └─────────┘
+</code></pre>
+<p>As you can see, we will use a channel to send and receive messages, we need a channel that allows multiple producers and single receiver (an MPSC channel in Rust lingua, Multiple Producers, Single Consumer). To declare such a channel, we need to write this code:</p>
+<pre><code class="language-rust ignore">// we will use an actor channel to handle scheduling of both gossiping and reading and
+// responding to messages.
+// create a channel that we will use to make our actors communicate
+let (tx, rx) = std::sync::mpsc::channel::&lt;Event&gt;();</code></pre>
+<p>We can again observe the turbofish syntax used to specify which type of things we want to send through our channel. Sum types are such a natural fit to describe a message going through a channel: you have a single type, that can describe several variants, each carrying their own payload.
+When calling this <code>channel</code> function we get its two handles, <code>tx</code> (for transmit) to send events and <code>rx</code> (for receive) to receive events.</p>
+<h3 id="actor-1-sending-gossip-events"><a class="header" href="#actor-1-sending-gossip-events">Actor 1: sending Gossip events</a></h3>
+<p>Now we only need to write our actors. Let's start with actor 1, a thread that will loop and periodically send <code>Event::TimeToGossip</code> events in the channel. The code to do so looks like this</p>
+<pre><code class="language-rust ignore">use std::time::Duration;
+// ...
+
+// clone the tx handle so that we keep one for the actor 2 as well
+let tx_clone = tx.clone();
+// spawn a thread generating periodic gossip events, our first actor
+let gh = std::thread::spawn(move || loop {
+    if tx_clone.send(Event::TimeToGossip).is_err() {
+        // other side hung up, let's finish the loop
+        break;
+    };
+    std::thread::sleep(Duration::from_millis(250));
+});</code></pre>
+<p>We can see here an example of a &quot;closure&quot;, i.e. an anonymous function that can capture data from its invocation context. This is very similar to python lambdas. The syntax to declare a closure is </p>
+<pre><code class="language-ignore">[optional: move] |[args...]| [expression]
+</code></pre>
+<p>Let's start with a simple example:</p>
+<pre><code class="language-rust ignore">let a: u8 = 23;
+let closure = |b: u8| a + b;
+
+println!(&quot;The result is {}&quot;, closure(7));</code></pre>
+<p>This will print <code>30</code>. This closure &quot;captures&quot; the a variable from its outer scope, and sums it with its parameter b. In the context of the closure, <code>a</code> would be a <code>&amp;u8</code> as closures capture variables by reference by default. If we want to capture outer variables by moving them into the closure scope instead of taking references, we prefix the closure syntax with the <code>move</code> keyword. In that case, <code>a</code> would be a <code>u8</code> within the closure, and after invoking it, you could no longer use <code>a</code> in the outer scope as it would have been moved away (consumed by the closure if you want).</p>
+<p>Let's go back to our original closure that defines our thread:</p>
+<pre><code class="language-rust ignore">move || loop {
+    if tx_clone.send(Event::TimeToGossip).is_err() {
+        // other side hung up, let's finish the loop
+        break;
+    };
+    std::thread::sleep(Duration::from_millis(250));
+}</code></pre>
+<p>We use <code>move</code> because we cannot take references and send them to another thread (this is not memory safe and rust won't let you do it). We capture the <code>tx_clone</code> handle (by value because of the <code>move</code> modifier), and in an infinite loop (the <code>loop</code> keyword is syntactic sugar for <code>while true</code>), we send a <code>Event::TimeToGossip</code> event in the channel and then sleep the thread for 250ms.
+If the send call returns an error, we break out of the loop and therefore finish the thread. This will happen when the other side of the channel hangs up and we will use this mechanism to properly finish our threads and shutdown our application.</p>
+<h3 id="actor-2-reading-stdin-for-incoming-messages"><a class="header" href="#actor-2-reading-stdin-for-incoming-messages">Actor 2: reading stdin for incoming messages</a></h3>
+<p>Let's show the code for the second actor and then comment it:</p>
+<pre><code class="language-rust ignore">// spawn a thread forwarding input into the channel, our second actor
+let ih = std::thread::spawn(move || {
+    // get a new input interface, this can hang if another one already exists somewhere...
+    let mut input = InputInterface::default();
+
+    for msg in input.iter::&lt;BroadcastPayload&gt;() {
+        let msg = msg.expect(&quot;Should be able to get message from stdin&quot;);
+        if tx.send(Event::MessageReceived(msg)).is_err() {
+            break;
+        };
+    }
+    // no more messages, send EOF for proper shutdown
+    tx.send(Event::Eof).unwrap();
+});</code></pre>
+<p>There is not much more going here but I'll detail a few points still:</p>
+<ul>
+<li>we don't clone <code>tx</code> once more, we directly captures the original <code>tx</code> into this thread since we won't need it anymore for other actors.</li>
+<li>once we have read all the messages from stdin, we send the special <code>Event::Eof</code> event in the channel to tell actor 3 that it's time to do shutdown. Once actor 3 shuts down, it will automatically signal actor 1 to shutdown as well by deleting the <code>rx</code> end of the channel.</li>
+<li>We need to acquire our mutable input interface within the thread scope. This is because an input interface is actually a mutex over stdin (to prevent several threads from accessing it simultaneously which would read garbage data), and a mutex cannot be sent safely to another thread. To make it work, we also need to change our Maelstrom init call to immediately drop the input handle we get from it and let this new thread acquire the lock itself. So you will need to change your init call to something like this: <code>let (mut node_metadata, _, mut output) = Maelstrom::init()?;</code> where <code>_</code> is a special sigil which prevents the binding from happening and that automatically drops the returned value.</li>
+</ul>
+<p>at this point, your main function should look something like this:</p>
+<pre><code class="language-rust ignore">// ... imports ...
+
+fn main() -&gt; anyhow::Result&lt;()&gt; {
+    // init our node by getting its metadata and an output and input interface to communicate
+    // here we drop the input interface as soon as we get it to release the lock before opening a
+    // new one in a separate thread.
+    let (mut node_metadata, _, mut output) = Maelstrom::init()?;
+
+    // init the state
+    let mut state = State {
+        messages: HashSet::new(),
+        topology: None,
+    };
+
+    // we will use an actor channel to handle scheduling of both gossiping and reading and
+    // responding to messages.
+    // create a channel that we will use to make our actors communicate
+    let (tx, rx) = std::sync::mpsc::channel::&lt;Event&gt;();
+    let tx_clone = tx.clone();
+
+    // spawn a thread generating periodic gossip events, our first actor
+    let gh = std::thread::spawn(move || loop {
+        if tx_clone.send(Event::TimeToGossip).is_err() {
+            // other side hung up, let's finish the loop
+            break;
+        };
+        std::thread::sleep(Duration::from_millis(250));
+    });
+
+    // spawn a thread forwarding input into the channel, our second actor
+    let ih = std::thread::spawn(move || {
+        // get a new input interface, this can hang if another one already exists somewhere...
+        let mut input = InputInterface::default();
+
+        for msg in input.iter::&lt;BroadcastPayload&gt;() {
+            let msg = msg.expect(&quot;Should be able to get message from stdin&quot;);
+            if tx.send(Event::MessageReceived(msg)).is_err() {
+                break;
+            };
+        }
+        // no more messages, send EOF for proper shutdown
+        tx.send(Event::Eof).unwrap();
+    });
+
+    // we now need to write the third actor in the main thread
+    todo!()
+}</code></pre>
+<h3 id="actor-3-consuming-events-and-acting-on-it"><a class="header" href="#actor-3-consuming-events-and-acting-on-it">Actor 3: consuming events and acting on it</a></h3>
+<p>Finally we will write our third actor that will simply consume events from the channel and react on them. On a gossip event, we will send messages to other nodes to let them know of the data we know. On a message event, we will respond to this message, possibly using the data we have in our state. Finally, on an eof event, we will simply stop the program properly.</p>
+<p>So let's start coding this by looping over the channel content and matching on the event type:</p>
+<pre><code class="language-rust ignore">// main loop: for each event we receive through the channel (our last actor)
+for event in rx {
+    match event {
+        // match on the type of event received
+        Event::Eof =&gt; {
+            // rx is automatically dropped once we get out of the loop because we implicitly called
+            // into_iter() on it to buils the loop, which consumes self.
+            break;
+        }
+        Event::TimeToGossip =&gt; {
+            // it's time to gossip, let's send messages to all nodes within our reach
+            todo!()
+        }
+        Event::MessageReceived(msg) =&gt; {
+            // match on the type of payload within the message, these are variants of the BroadcastPayload enum
+            match &amp;msg.body.payload {
+                BroadcastPayload::Gossip { known } =&gt; {
+                    // we received a gossip message from another node, let's update our known data
+                    todo!()
+                }
+                BroadcastPayload::Topology { topology } =&gt; {
+                    state.topology = Some(topology.clone());
+                    output.send_msg(msg.to_response(
+                        Some(node_metadata.get_next_msg_id()),
+                        BroadcastPayload::TopologyOk,
+                    ))?
+                }
+                // we are not supposed to receive a TopologyOk message, let's panic when it happens
+                BroadcastPayload::TopologyOk =&gt; {
+                    panic!(&quot;TopologyOk message shouldn't be received by a node&quot;)
+                }
+                BroadcastPayload::Broadcast { message } =&gt; {
+                    state.messages.insert(*message);
+                    output.send_msg(msg.to_response(
+                        Some(node_metadata.get_next_msg_id()),
+                        BroadcastPayload::BroadcastOk,
+                    ))?
+                }
+                // we are not supposed to receive a BroadcastOk message, let's panic when it happens
+                BroadcastPayload::BroadcastOk { .. } =&gt; {
+                    panic!(&quot;BroadcastOk message shouldn't be received by a node&quot;)
+                }
+                BroadcastPayload::Read =&gt; output.send_msg(msg.to_response(
+                    Some(node_metadata.get_next_msg_id()),
+                    BroadcastPayload::ReadOk {
+                        messages: state.messages.clone(),
+                    },
+                ))?,
+                // we are not supposed to receive a ReadOk message, let's panic when it happens
+                BroadcastPayload::ReadOk { .. } =&gt; {
+                    panic!(&quot;ReadOk message shouldn't be received by a node&quot;)
+                }
+            }
+        }
+    };
+}
+
+// let's join on both threads for proper exit
+ih.join().unwrap();
+gh.join().unwrap();</code></pre>
+<p>In case of an Eof, we are just breaking out of the outer loop and then calling <code>join()</code> on both our thread handles to wait until they have complete and properly exit our program.</p>
+<p>In case of a message received, we do the same as we did in the previous part, except now this time we support a new payload type: <code>BroadcastPayload::Gossip</code>. This is a one shot message that don't expect a response, and that looks like this:</p>
+<pre><code class="language-rust ignore">/// Defines the payload we want to send to clients in the broadcast challenge
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(tag = &quot;type&quot;)]
+#[serde(rename_all = &quot;snake_case&quot;)]
+enum BroadcastPayload {
+    // ... snip ...
+    // we will use this message to communicate gossip in-between nodes of the cluster
+    Gossip {
+        known: HashSet&lt;usize&gt;,
+    },
+}</code></pre>
+<p>Now we just need to implement how to react on such a gossip message received, and how to react to a <code>TimeToGossip</code> event.</p>
+<p>For the latter we will just send a <code>Gossip</code> message with the messages we have stored in our state, and for the former we will update our state with the unknown messages we received:</p>
+<pre><code class="language-rust ignore">// ...
+Event::TimeToGossip =&gt; {
+    // it's time to gossip, let's send messages to all nodes within our reach
+    if let Some(topology) = state.topology.as_ref() {
+        for n in topology.get(&amp;node_metadata.node_id).context(format!(
+            &quot;Node {} should appear in the topology&quot;,
+            node_metadata.node_id
+        ))? {
+            // for now we send the full list of messages we know, which is suboptimal
+            output.send_msg(Message {
+                src: node_metadata.node_id.clone(),
+                dst: n.clone(),
+                body: Body {
+                    msg_id: None,
+                    in_reply_to: None,
+                    payload: BroadcastPayload::Gossip {
+                        known: state.messages.clone(),
+                    },
+                },
+            })?;
+        }
+    }
+    // if we don't have the topology yet, let's skip gossiping for now.
+}
+// ...</code></pre>
+<pre><code class="language-rust ignore">// ...
+match &amp;msg.body.payload {
+    BroadcastPayload::Gossip { known } =&gt; {
+        // we received a gossip message from another node, let's update our known data
+        state.messages = state.messages.union(known).copied().collect();
+    }
+// ...
+}</code></pre>
+<p>And that's all for this challenge, we implemented a complete actor model based on multithreading to act on several types of events coming from various sources in our program.</p>
+<h3 id="testing-our-code"><a class="header" href="#testing-our-code">Testing our code</a></h3>
+<p>It's now time to build and test our code to verify if we succeeded. First let's run <code>cargo build</code> to build a debug binary of our program. This should generate a new binary: <code>target/debug/broadcast_2</code>.</p>
+<p>Let's now invoke Maelstrom on it to see if we solved the challenge:</p>
+<pre><code class="language-bash">~/maelstrom/maelstrom test -w broadcast --bin ./target/debug/broadcast_2 --node-count 5 --time-limit 20 --rate 10
+</code></pre>
+<p>If everything goes well, you should see</p>
+<pre><code class="language-ignore">Everything looks good! ヽ(‘ー`)ノ
+</code></pre>
+<p>Congrats! In the next parts, we will work at making our gossip smarter and fault tolerant.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="04a-broadcast.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next" href="A-cargo.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="04a-broadcast.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next" href="A-cargo.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>
